@@ -98,11 +98,15 @@ public class GenericLinkedList<E> implements Iterable<E> {
     }
 
     @FunctionalInterface
-    public interface Visitor<E> { void accept(E e); }
+    public interface Visitor<E> { void accept(E element); }
 
-    public void forEach(Visitor<E> v) {
-        Node<E> cur = head;
-        while (cur != null) { v.accept(cur.data); cur = cur.next; }
+    public void forEach(Visitor<E> value) {
+        for (Node<E> current = head; current != null; current = current.next) {
+            value.accept(current.data);
+        }
+        // set the current = head;
+        // run from the first node of the list to last node of the list
+        // call method accept from interface Visitor
     }
 
     @Override

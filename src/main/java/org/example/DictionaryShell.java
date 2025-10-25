@@ -1,20 +1,16 @@
-
 package org.example;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Collections;
 import java.util.Scanner;
 
 /**
- * Command-line interface:
- *   search <word> | add <word> | delete <word> | list | stats | exit
- * If args[0] is provided, load file on startup (root project folder).
- *
- * Example:
- *   java DictionaryShell sample.txt
+ * contains a main that provides a command-line interface to DictionaryBuilder
+ * Accept a command line argument of a filename to load as the dictionary
+ * Allow the user to interact with the dictionary using the following commands:
+ * search, add, delete, list, stats, exit
  */
-
-
 public class DictionaryShell {
 
     private static void printHelp() {
@@ -22,19 +18,20 @@ public class DictionaryShell {
     }
 
     public static void main(String[] args) {
-        Locale.setDefault(Locale.US);
-        DictionaryBuilder dict;
+        // Locale.setDefault(Locale.US);  <-- Bỏ dòng này
+        DictionaryBuilder dictionary;
         if (args.length >= 1) {
-            String filename = args[0];
+            String fileName = args[0];
+            // check existing file --> read dictionary from DictionaryBuilder(fileName)
             try {
-                dict = new DictionaryBuilder(filename);
+                dictionary = new DictionaryBuilder(fileName);
             } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + filename + " (starting with empty dictionary)");
-                dict = new DictionaryBuilder(101);
+                System.out.println("File " + fileName +" is not found" + " (it will be started with empty dictionary)");
+                dictionary = new DictionaryBuilder(991);
             }
         } else {
-            System.out.println("No input file provided; starting with empty dictionary.");
-            dict = new DictionaryBuilder(101);
+            System.out.println("Please input provided file, otherwise starting with empty dictionary.");
+            dictionary = new DictionaryBuilder(991);
         }
 
         System.out.println("Welcome to the Dictionary Builder CLI.");
@@ -43,56 +40,81 @@ public class DictionaryShell {
         Scanner in = new Scanner(System.in);
         while (true) {
             System.out.print("> ");
-            if (!in.hasNextLine()) break;
+            if (!in.hasNextLine())
+                break;
             String line = in.nextLine().trim();
-            if (line.isEmpty()) continue;
+            if (line.isEmpty())
+                continue;
 
             String[] parts = line.split("\\s+", 2);
-            String cmd = parts[0].toLowerCase();
+            String command = parts[0].toLowerCase();
 
             try {
-                switch (cmd) {
+                switch (command) {
+                        // get Frequency of word in dictionary
+                        // print
+                        // if not found --> print error
                     case "search": {
-                        if (parts.length < 2) { System.out.println("Usage: search <word>"); break; }
-                        String w = parts[1];
-                        int f = dict.getFrequency(w);
-                        if (f > 0) System.out.println(f + " instance(s) of \"" + w.toLowerCase() + "\" found.");
-                        else System.out.println("\"" + w.toLowerCase() + "\" not found.");
+                        if (parts.length < 2) { System.out.println("Usage: search <word>");
+                            break;
+                        }
+                        String wordDictionary = parts[1];
+                        int frequency = dictionary.getFrequency(wordDictionary);
+                        if (frequency > 0) {
+                            System.out.println(frequency + " instance(s) of \"" + wordDictionary.toLowerCase() + "\" found.");
+                        }else
+                            System.out.println("\"" + wordDictionary.toLowerCase() + "\" not found.");
                         break;
                     }
+                        // If word is not existed, add new word
+                        // If word is existed, increase count
                     case "add": {
-                        if (parts.length < 2) { System.out.println("Usage: add <word>"); break; }
-                        String w = parts[1];
-                        int before = dict.getFrequency(w);
-                        dict.addWord(w);
-                        if (before == 0) System.out.println("\"" + w.toLowerCase() + "\" added.");
-                        else System.out.println("\"" + w.toLowerCase() + "\" count incremented.");
+                        if (parts.length < 2) {
+                            System.out.println("Usage: add <word>");
+                            break;
+                        }
+                        String wordDictionary = parts[1];
+                        int before = dictionary.getFrequency(wordDictionary);
+                        dictionary.addWord(wordDictionary);
+                        if (before == 0){
+                            System.out.println("\"" + wordDictionary.toLowerCase() + "\" added.");
+                        }
+                        else
+                            System.out.println("\"" + wordDictionary.toLowerCase() + "\" count incremented.");
                         break;
                     }
+                        // delete word in Dictionary
+                        // if that word is not existed, throw and print error
                     case "delete": {
-                        if (parts.length < 2) { System.out.println("Usage: delete <word>"); break; }
-                        String w = parts[1];
-                        dict.removeWord(w);
-                        System.out.println("\"" + w.toLowerCase() + "\" deleted.");
+                        if (parts.length < 2) {
+                            System.out.println("Usage: delete <word>");
+                            break;
+                        }
+                        String wordDictionary = parts[1];
+                        dictionary.removeWord(wordDictionary);
+                        System.out.println("\"" + wordDictionary.toLowerCase() + "\" deleted.");
                         break;
                     }
+                        // print every word in dictionary
                     case "list": {
-                        ArrayList<String> words = dict.getAllWords();
-                        for (String w : words) System.out.println(w);
+                        ArrayList<String> words = dictionary.getAllWords();
+                        for (String wordDictionary : words)
+                            System.out.println(wordDictionary);
                         break;
                     }
+                        // print statistics
                     case "stats": {
-                        System.out.println("Total words: " + dict.getTotalWords());
-                        System.out.println("Total unique words: " + dict.getUniqueWords());
-                        System.out.printf(Locale.US, "Estimated load factor: %.2f%n", dict.estimatedLoadFactor());
-                        System.out.println("Table capacity (4k+3 prime): " + dict.capacity());
+                        System.out.println("Total words: " + dictionary.getTotalWords());
+                        System.out.println("Total unique words: " + dictionary.getUniqueWords());
+                        System.out.printf("Estimated load factor: %.2f%n", dictionary.estimatedLoadFactor());
+                        System.out.println("Table capacity (4k+3 prime): " + dictionary.capacity());
                         break;
                     }
                     case "exit":
                         System.out.println("Quitting...");
                         return;
                     default:
-                        System.out.println("Unknown command: " + cmd);
+                        System.out.println("Unknown command: " + command);
                         printHelp();
                 }
             } catch (DictionaryEntryNotFoundException ex) {

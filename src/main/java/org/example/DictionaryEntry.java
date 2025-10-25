@@ -2,19 +2,20 @@
 package org.example;
 
 /**
- * One dictionary item: a normalized (lowercase, punctuation-stripped) word
- * and its frequency.
+ * One word and its frequency
+ * (Lower-case; punctuation-stripped)
  */
 public class DictionaryEntry {
     private final String word;
-    private int count;
+    private int count; // its frequency
 
+    // constructor
     public DictionaryEntry(String word) {
-        if (word == null) throw new IllegalArgumentException("word null");
+        if (word == null) throw new IllegalArgumentException("words are null");
         this.word = word;
         this.count = 1;
     }
-
+    // methods:
     public String getWord() { return word; }
     public int getCount() { return count; }
     public void increment() { count++; }
