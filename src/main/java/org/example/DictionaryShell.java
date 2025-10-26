@@ -2,7 +2,6 @@ package org.example;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -13,12 +12,11 @@ import java.util.Scanner;
  */
 public class DictionaryShell {
 
-    private static void printHelp() {
+    private static void printCommand() {
         System.out.println("Available commands: search <word>, add <word>, delete <word>, list, stats, exit");
     }
 
     public static void main(String[] args) {
-        // Locale.setDefault(Locale.US);  <-- Bỏ dòng này
         DictionaryBuilder dictionary;
         if (args.length >= 1) {
             String fileName = args[0];
@@ -35,7 +33,7 @@ public class DictionaryShell {
         }
 
         System.out.println("Welcome to the Dictionary Builder CLI.");
-        printHelp();
+        printCommand();
 
         Scanner in = new Scanner(System.in);
         while (true) {
@@ -115,7 +113,7 @@ public class DictionaryShell {
                         return;
                     default:
                         System.out.println("Unknown command: " + command);
-                        printHelp();
+                        printCommand();
                 }
             } catch (DictionaryEntryNotFoundException ex) {
                 System.out.println(ex.getMessage());

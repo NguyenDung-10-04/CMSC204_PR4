@@ -46,7 +46,8 @@ public class DictionaryBuilder {
 
         // create new empty linked list
         this.table = (GenericLinkedList<DictionaryEntry>[]) new GenericLinkedList[capacity];
-        for (int i = 0; i < capacity; i++) table[i] = new GenericLinkedList<>();
+        for (int i = 0; i < capacity; i++)
+            table[i] = new GenericLinkedList<>();
         // run for loop from 0 to capacity,
         // initialize each ele in hash table to empty each linked list
     }
@@ -80,11 +81,11 @@ public class DictionaryBuilder {
     }
 
     // covert words into normal words (Lowercase - Remove - trim space)
-    private static String normalize(String w) {
-        if (w == null) return "";
-        w = w.toLowerCase();
-        w = w.replaceAll("[^a-z0-9']+", " ").trim();
-        return w;
+    private static String normalize(String word) {
+        if (word == null) return "";
+        word = word.toLowerCase();
+        word = word.replaceAll("[^a-z0-9']+", " ").trim();
+        return word;
     }
 
 
@@ -94,10 +95,12 @@ public class DictionaryBuilder {
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
                 String cleaned = normalize(line);
-                if (cleaned.isEmpty()) continue;
+                if (cleaned.isEmpty())
+                    continue;
                 String[] tokens = cleaned.split("\\s+");
                 for (String t : tokens) {
-                    if (t.isEmpty() || t.equals("'")) continue;
+                    if (t.isEmpty() || t.equals("'"))
+                        continue;
                     addWord(t);
                 }
             }
@@ -134,13 +137,19 @@ public class DictionaryBuilder {
     }
     // check how many times does that word appear
     public int getFrequency(String word) {
-        if (word == null) return 0;
+        if (word == null) {
+            return 0;
+        }
         String newWord = normalize(word);
-        if (newWord.isEmpty()) return 0;
+        if (newWord.isEmpty()) {
+            return 0;
+        }
 
         int index = indexForHash(newWord.hashCode(), capacity);
         DictionaryEntry found = table[index].find(new DictionaryEntry(newWord));
-        if (found == null) return 0;
+        if (found == null) {
+            return 0;
+        }
         return found.getCount();
     }
 
